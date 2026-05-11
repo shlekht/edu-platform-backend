@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from db.database import Base, engine
-
+from db.database import engine
+from models.base import Base
 
 app = FastAPI(title="LMS API")
 
