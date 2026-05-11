@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, Session
 from core.config import settings
 
 engine = create_engine(
@@ -22,5 +22,3 @@ def get_session():
         db.close()
 
 
-class Base(DeclarativeBase):
-    pass
