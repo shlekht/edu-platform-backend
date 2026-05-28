@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from models.user import User
 
 
@@ -21,3 +21,12 @@ def create_user(user_obj: User, db: Session) -> User:
 def get_user_by_email(email: str, db: Session) -> User | None:
     query = select(User).where(User.email == email)
     return db.execute(query).scalar_one_or_none()
+
+
+def get_user_with_notes(user_id: int, db: Session) -> User | None:
+    query = (
+        select(User)
+        .options(joinedload(User.notes))  # Загружаем связанные заметки вместе с пользователем
+        .where(User.id == user_id)
+    )
+    return db.execute(query).unique().scalar_one_or_none()

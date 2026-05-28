@@ -1,3 +1,5 @@
+from typing import List
+from schemas.note import NoteShortSchema
 from pydantic import BaseModel, EmailStr
 from models.user import UserRole
 
@@ -24,6 +26,15 @@ class UserRead(UserBase):
         from_attributes = True
 
 
+class UserMeResponse(BaseModel):
+    id: int
+    email: EmailStr
+    full_name: str
+    role: UserRole
+    notes: List[NoteShortSchema] = []
+
+    class Config:
+        from_attributes = True
 
 
 class Token(BaseModel):
