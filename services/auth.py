@@ -6,16 +6,11 @@ from exceptions.auth import AuthenticationError, UserAlreadyExistsError
 from core.security import create_access_token, hash_password, verify_password
 from models.user import User
 from schemas.user import UserCreate
-
-
+from repositories import users_repository
 def register(user_in: UserCreate, db: Session):
     
-    query = select(User).where(User.email == user_in.email)
-    existing_user = db.execute(query).scalar_one_or_none()
-    
-    if existing_user:
+    if users_repository.is_user_exist(user_in.email, db):
         raise UserAlreadyExistsError()
-    
     
     new_user = User(
         email=user_in.email,
@@ -23,11 +18,7 @@ def register(user_in: UserCreate, db: Session):
         hashed_password=hash_password(user_in.password),
         role=user_in.role
     )
-    
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+    return users_repository.create_user(new_user, db)
 
 
 def login(
@@ -35,9 +26,7 @@ def login(
         db: Session,
     ):
     # OAuth2PasswordRequestForm использует поле 'username' для логина (в нашем случае это email)
-    query = select(User).where(User.email == form_data.username)
-    user = db.execute(query).scalar_one_or_none()
-    
+    user = users_repository.get_user_by_email(form_data.username, db)
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise AuthenticationError()
     
