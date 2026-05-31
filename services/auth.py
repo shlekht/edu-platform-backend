@@ -10,7 +10,7 @@ from repositories import users_repository
 def register(user_in: UserCreate, db: Session):
     
     if users_repository.is_user_exist(user_in.email, db):
-        raise UserAlreadyExistsError()
+        raise UserAlreadyExistsError(f"User with email {user_in.email} already exists")
     
     new_user = User(
         email=user_in.email,
@@ -28,7 +28,7 @@ def login(
     # OAuth2PasswordRequestForm использует поле 'username' для логина (в нашем случае это email)
     user = users_repository.get_user_by_email(form_data.username, db)
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise AuthenticationError()
+        raise AuthenticationError(f"Invalid credentials for user {form_data.username}")
     
     # Создаем токен, записывая ID пользователя в поле 'sub'
     access_token = create_access_token(subject=user.id)

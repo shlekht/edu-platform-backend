@@ -9,15 +9,14 @@ class UserBase(BaseModel):
 
 
 
-
+# схема при создании пользователя, включает password, role, email, full_name
 class UserCreate(UserBase):
     password: str
-    # По умолчанию регистрируем как обычного пользователя
-    role: UserRole = UserRole.user
+    role: UserRole = UserRole.user # по умолчанию роль user
 
 
 
-
+# схема при прочтении основных данных пользователя
 class UserRead(UserBase):
     id: int
     role: UserRole
@@ -26,6 +25,7 @@ class UserRead(UserBase):
         from_attributes = True
 
 
+# схема для ответа при GET запросе /users/me, включает id, email, full_name, role и список заметок
 class UserMeResponse(BaseModel):
     id: int
     email: EmailStr
