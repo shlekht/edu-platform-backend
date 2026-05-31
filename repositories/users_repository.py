@@ -23,10 +23,9 @@ def get_user_by_email(email: str, db: Session) -> User | None:
     return db.execute(query).scalar_one_or_none()
 
 
-def get_user_with_notes(user_id: int, db: Session) -> User | None:
+def get_user_by_id(user_id: int, db: Session) -> User | None:
     query = (
         select(User)
-        .options(joinedload(User.notes))  # Загружаем связанные заметки вместе с пользователем
         .where(User.id == user_id)
     )
-    return db.execute(query).unique().scalar_one_or_none()
+    return db.execute(query).scalar_one_or_none()
