@@ -13,3 +13,6 @@ class NoteSchema(BaseModel):
 class NoteCreateSchema(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     text: str
+
+class NoteUpdateSchema(NoteCreateSchema):
+    pass
