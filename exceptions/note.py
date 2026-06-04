@@ -1,0 +1,3 @@
+class NoteNotFoundError(Exception):
+    pass
+
