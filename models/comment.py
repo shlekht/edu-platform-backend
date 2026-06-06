@@ -14,7 +14,7 @@ class Comment(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str] = mapped_column(Text)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    course_id: Mapped[int] = mapped_column(ForeignKey("course.id"))
+    course_id: Mapped[int] = mapped_column(ForeignKey("course.id", ondelete="CASCADE"))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
     # Relationships

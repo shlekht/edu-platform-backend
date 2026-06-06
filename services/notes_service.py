@@ -23,10 +23,10 @@ def update_note(
     note = notes_repository.get_note_by_id(note_id=note_id, db=db)
 
     if not note:
-        raise NoteNotFoundError("Заметка не найдена")
+        raise NoteNotFoundError(f"note with id {note_id} not found")
 
     if note.user_id != user_id:
-        raise AuthenticationError("Нет прав на редактирование этой заметки")
+        raise AuthenticationError(f"User with id {user_id} is not the owner of note with id {note_id}")
 
     note.title = note_data.title
     note.text = note_data.text
@@ -37,9 +37,9 @@ def delete_note(note_id: int, user_id: int, db: Session) -> None:
     note = notes_repository.get_note_by_id(note_id=note_id, db=db)
 
     if not note:
-        raise NoteNotFoundError("Заметка не найдена")
+        raise NoteNotFoundError(f"note with id {note_id} not found")
 
     if note.user_id != user_id:
-        raise AuthenticationError("Нет прав на удаление этой заметки")
+        raise AuthenticationError(f"User with id {user_id} is not the owner of note with id {note_id}")
 
     notes_repository.delete_note(note=note, db=db)

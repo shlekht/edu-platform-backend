@@ -16,7 +16,7 @@ class UserCourseHistory(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    course_id: Mapped[int] = mapped_column(ForeignKey("course.id"))
+    course_id: Mapped[int] = mapped_column(ForeignKey("course.id", ondelete="CASCADE"))
     viewed_at: Mapped[datetime] = mapped_column(
         server_default=func.now(), 
         onupdate=func.now()

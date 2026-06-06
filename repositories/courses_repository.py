@@ -23,3 +23,7 @@ def create_course(course_obj: Course, db: Session) -> Course:
         db.commit()
         db.refresh(course_obj)
         return course_obj
+
+def delete_course(course: Course, db: Session) -> None:
+        db.delete(course)
+        db.commit()
