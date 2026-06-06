@@ -5,6 +5,7 @@ from db.database import get_session
 from api.deps import get_current_user, check_teacher_role
 
 from exceptions.course import CourseNotFoundError
+from exceptions.auth import AuthenticationError
 from schemas.course import CourseShortSchema, CourseDetailSchema, CourseCreateSchema
 from schemas.comment import CommentResponseSchema, CommentCreateSchema
 
@@ -21,7 +22,7 @@ def get_all_courses(db: Session = Depends(get_session)  ):
     except Exception:
         raise HTTPException(
             status_code=500,
-            detail="Ошибка при получении курсов"
+            detail="Internal Server Error when getting all courses"
     )
 
 
@@ -38,10 +39,10 @@ def get_course(
             status_code=404,
             detail=str(e)
         )
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
-            detail=f"Ошибка при получении курса"
+            detail="Internal Server Error when getting course"
         )
 
 
@@ -57,7 +58,7 @@ def create_course(
     except Exception:
         raise HTTPException(
             status_code=500,
-            detail="Ошибка при создании курса"
+            detail="Internal Server Error when creating course"
         )
 
 
@@ -77,7 +78,7 @@ def get_course_comments(
     except Exception:
         raise HTTPException(
             status_code=500,
-            detail="Ошибка при получении комментариев"
+            detail="Internal Server Error when getting course comments"
         )
 
 
@@ -99,5 +100,29 @@ def add_comment_to_course(
     except Exception:
         raise HTTPException(
             status_code=500,
-            detail="Ошибка при добавлении комментария"
+            detail="Internal Server Error when adding comment"
+        )
+
+@router.delete("/{course_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_course(
+    course_id: int,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    try:
+        course_service.delete_course(course_id=course_id, user_id=current_user.id, db=db)
+    except CourseNotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e)
+        )
+    except AuthenticationError as e:
+        raise HTTPException(
+            status_code=403,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error when deleting course"
         )

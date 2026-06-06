@@ -37,6 +37,6 @@ def check_teacher_role(current_user: User = Depends(get_current_user)) -> User:
     if current_user.role != UserRole.teacher:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="У вас недостаточно прав (требуется роль Teacher)"
+            detail="You do not have enough permissions (Teacher role required)"
         )
     return current_user

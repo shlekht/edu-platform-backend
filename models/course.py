@@ -21,5 +21,5 @@ class Course(Base):
 
     # Relationships
     author: Mapped["User"] = relationship(back_populates="authored_courses")
-    comments: Mapped[List["Comment"]] = relationship(back_populates="course")
-    history: Mapped[List["UserCourseHistory"]] = relationship(back_populates="course")
+    comments: Mapped[List["Comment"]] = relationship(back_populates="course", cascade="all, delete-orphan")
+    history: Mapped[List["UserCourseHistory"]] = relationship(back_populates="course", cascade="all, delete-orphan")

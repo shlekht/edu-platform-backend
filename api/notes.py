@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 
 from db.database import get_session 
 from api.deps import get_current_user
+from exceptions.auth import AuthenticationError
+from exceptions.note import NoteNotFoundError
 from schemas.note import NoteCreateSchema, NoteSchema, NoteUpdateSchema
 from services import notes_service
 
@@ -16,7 +18,7 @@ def get_all_notes(current_user = Depends(get_current_user), db: Session = Depend
     except Exception:
         raise HTTPException(
             status_code=500,
-            detail="Ошибка при получении заметок"
+            detail="Internal Server Error when getting all notes"
     )
 
 @router.post("/", response_model=NoteSchema, status_code=status.HTTP_201_CREATED)
@@ -39,12 +41,28 @@ def update_note(
     current_user = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
-    return notes_service.update_note(
-        note_id=note_id,
-        user_id=current_user.id,
-        note_data=note_data,
-        db=db
-    )
+    try:
+        return notes_service.update_note(
+            note_id=note_id,
+            user_id=current_user.id,
+            note_data=note_data,
+            db=db
+        )
+    except NoteNotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e)
+        )
+    except AuthenticationError as e:
+        raise HTTPException(
+            status_code=403,
+            detail=str(e)
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error when updating note"
+        )
 
 @router.delete("/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_note(
@@ -52,7 +70,22 @@ def delete_note(
     current_user = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
-    notes_service.delete_note(note_id=note_id, user_id=current_user.id, db=db)
-    
+    try:
+        notes_service.delete_note(note_id=note_id, user_id=current_user.id, db=db)
+    except NoteNotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e)
+        )
+    except AuthenticationError as e:
+        raise HTTPException(
+            status_code=403,
+            detail=str(e)
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error when deleting note"
+        )
 
     

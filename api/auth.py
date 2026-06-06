@@ -18,7 +18,7 @@ def register(
     except UserAlreadyExistsError:
         raise HTTPException(
             status_code=400,
-            detail="Пользователь с таким email уже существует"
+            detail="User with this email already exists"
     )
     
 
@@ -33,6 +33,6 @@ def login(
     except AuthenticationError:
          raise HTTPException(
              status_code=status.HTTP_401_UNAUTHORIZED,
-             detail="Неверный email или пароль",
+             detail="Invalid email or password",
              headers={"WWW-Authenticate": "Bearer"},
          )
