@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
     OPENAI_API_KEY: str
+    GROQ_API_KEY: str
+    GROQ_SYSTEM_PROMPT: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
