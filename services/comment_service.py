@@ -4,6 +4,7 @@ from schemas.comment import CommentCreateSchema
 from sqlalchemy.orm import Session
 from models.comment import Comment
 from exceptions.course import CourseNotFoundError
+from core.openai_client import openai_client
 
 
 def get_comments_for_course(course_id: int, db: Session):
@@ -26,3 +27,19 @@ def add_comment(course_id: int, user_id: int, comment_data: CommentCreateSchema,
     )
 
     return comments_repository.create_comment(comment_to_create, db)
+
+
+def moderate_comment(text: str):
+    """ true - not harmful comment, false - potentially harmful comment"""
+    print("text:", text)
+    try:
+        response = openai_client.moderations.create(
+            model="omni-moderation-latest",
+            input=text,
+        )
+        result = response.results[0]
+        return not result.flagged
+     
+    except Exception as e:
+        print("Internal OpenAI-moderation error.")
+        return True

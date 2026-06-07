@@ -6,7 +6,10 @@ from jose import jwt, JWTError
 from core.config import settings
 from core.security import oauth2_scheme
 from models.user import User, UserRole
-from db.database import get_session 
+from db.database import get_session
+from schemas.comment import CommentCreateSchema 
+from services import comment_service
+
 
 def get_current_user(
     token: str = Depends(oauth2_scheme), 
@@ -40,3 +43,18 @@ def check_teacher_role(current_user: User = Depends(get_current_user)) -> User:
             detail="You do not have enough permissions (Teacher role required)"
         )
     return current_user
+
+
+def moderate_comment(comment: CommentCreateSchema):
+    print("moderate comment")
+    text_to_check = comment.text
+    comment_is_safe = comment_service.moderate_comment(text_to_check)
+    if not comment_is_safe:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail = "Comment is potentially harmful."
+        )
+    return comment
+    
+    
+    
