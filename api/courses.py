@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 
 from db.database import get_session 
-from api.deps import get_current_user, check_teacher_role
+from api.deps import get_current_user, check_teacher_role, moderate_comment
 
 from exceptions.course import CourseNotFoundError
 from exceptions.auth import AuthenticationError
@@ -85,7 +85,7 @@ def get_course_comments(
 @router.post("/{id}/comments", response_model=CommentResponseSchema, status_code=status.HTTP_201_CREATED)
 def add_comment_to_course(
     id: int,
-    comment_data: CommentCreateSchema,
+    comment_data: CommentCreateSchema = Depends(moderate_comment),
     current_user = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
@@ -121,7 +121,7 @@ def delete_course(
             status_code=403,
             detail=str(e)
         )
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail="Internal Server Error when deleting course"
