@@ -1,8 +1,8 @@
 from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.dialects.postgresql import insert
 from models.history import UserCourseHistory
-
+from models.course import Course
 
 def upsert_view_history(user_id: int, course_id: int, db: Session) -> None:
     """
@@ -25,3 +25,14 @@ def upsert_view_history(user_id: int, course_id: int, db: Session) -> None:
     
     db.execute(stmt)
     db.commit()
+
+def get_history_by_user_id(user_id: int, db:Session) -> list[UserCourseHistory]:
+    return (
+        db.query(UserCourseHistory)
+        .options(
+            joinedload(UserCourseHistory.course).joinedload(Course.author)
+        )
+        .filter(UserCourseHistory.user_id == user_id)
+        .order_by(UserCourseHistory.viewed_at.desc())
+        .all()
+    )

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db.database import engine
 from models.base import Base
-from api import auth, users, courses, notes, chat
+from api import auth, users, courses, notes, chat, history
 
 
 app = FastAPI(title="LMS API")
@@ -27,6 +27,7 @@ app.include_router(users.router)
 app.include_router(courses.router)
 app.include_router(notes.router)
 app.include_router(chat.router)
+app.include_router(history.router)
 
 Base.metadata.create_all(bind=engine)
 

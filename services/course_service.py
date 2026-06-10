@@ -3,7 +3,7 @@ from exceptions.course import CourseNotFoundError
 from exceptions.auth import AuthenticationError
 from models.course import Course
 from repositories import courses_repository
-from repositories import histories_repository
+from repositories import history_repository
 from schemas.course import CourseCreateSchema
 
 
@@ -16,7 +16,7 @@ def get_course_by_id(course_id: int, user_id: int, db: Session):
         raise CourseNotFoundError(f"Course with id {course_id} not found")
     
     # пользователь открыл курс = пишем/обновляем историю
-    histories_repository.upsert_view_history(user_id, course_id, db)
+    history_repository.upsert_view_history(user_id, course_id, db)
     
     return course
 
