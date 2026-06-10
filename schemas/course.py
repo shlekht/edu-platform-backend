@@ -14,7 +14,7 @@ class CourseShortSchema(BaseModel):
     id: int
     title: str
     description: str
-    author_id: int
+    author: str
     created_at: datetime
 
     class Config:

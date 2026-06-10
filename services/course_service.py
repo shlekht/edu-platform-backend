@@ -5,10 +5,22 @@ from models.course import Course
 from repositories import courses_repository
 from repositories import history_repository
 from schemas.course import CourseCreateSchema
+from schemas.course import CourseShortSchema
 
 
-def get_all_courses(db: Session):
-        return courses_repository.get_all_courses(db)
+def get_all_courses(db: Session) -> list[CourseShortSchema]:
+    courses = courses_repository.get_all_courses(db)
+    
+    return [
+        CourseShortSchema(
+            id=course.id,
+            title=course.title,
+            description=course.description,
+            author=course.author.full_name,
+            created_at=course.created_at,
+        )
+        for course in courses
+    ]
 
 def get_course_by_id(course_id: int, user_id: int, db: Session):
     course = courses_repository.get_course_by_id(course_id, db)
