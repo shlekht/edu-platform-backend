@@ -6,7 +6,7 @@ from models.course import Course
 
 
 def get_all_courses(db: Session) -> list[Course]:
-        return db.query(Course).all()
+    return db.query(Course).options(joinedload(Course.author)).all() # загружаем авторов вместе с курсами
 
 
 def get_course_by_id(course_id: int, db: Session) -> Course | None:
