@@ -3,10 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from db.database import engine
 from models.base import Base
 from api import auth, users, courses, notes, chat, history
-
+from admin import create_admin
 
 app = FastAPI(title="LMS API")
-
+create_admin(app, engine) # sqladmin panel
 
 origins = [
     "http://localhost:5173",    
